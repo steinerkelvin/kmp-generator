@@ -2,11 +2,7 @@
 from typing import TypeVar, Dict, List
 import string
 
-T = TypeVar('T')
-
-LETTERS = list(string.ascii_lowercase)
-
-def run(map_next: List[Dict[str, int]], txt: str) -> int:
+def run_kmp(map_next: List[Dict[str, int]], txt: str) -> int:
     last = len(map_next) - 1
     s = 0
     for c in txt:
@@ -34,18 +30,32 @@ def build_kmp_automata(alphabet, pat):
         for c in alphabet:
             if c != c_i:
                 sub_pat = pat[1:i] + c
-                nxt = run(map_next, sub_pat)
+                nxt = run_kmp(map_next, sub_pat)
                 if nxt != 0:  # Ignora transições que "resetam" o automato
                     map_next[i][c] = nxt
 
     return map_next
 
+def get_inverted_map(alphabet, map_next):
+    M = len(map_next)
+    inverted = [ dict() for _ in range(M) ]
+
+    for s in range(M):
+        mp = map_next[s]
+        for c in alphabet:
+            nxt = mp.get(c, 0)
+            clist = inverted[nxt].setdefault(s, [])
+            clist.append(c)
+
+    return inverted
 
 
 if __name__ == '__main__':
 
     pat = "tobeornottobe"
     txt = "tobeornoto"
+
+    LETTERS = list(string.ascii_lowercase)
 
     map_next = build_kmp_automata(LETTERS, pat)
     print(map_next)
@@ -56,9 +66,11 @@ if __name__ == '__main__':
             # if nxt != 0:
             print(f"  {c} -> {nxt}")
 
-    s = run(map_next, txt)
+    s = run_kmp(map_next, txt)
 
     print('\n')
+    print(f"pat: {pat}")
+    print(f"txt: {txt}")
     print("RESULT:", s)
 
 
