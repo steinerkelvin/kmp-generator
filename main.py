@@ -1,7 +1,6 @@
 
 import string
-# from pprint import pprint
-from sympy import Symbol, Eq, collect, pprint, solve, diff, simplify
+from sympy import Symbol, Eq, collect, pprint, diff, solve, simplify, latex
 from kmp import build_kmp_automata, run_kmp, get_inverted_map
 
 def build_equations(inverted_map):
@@ -31,7 +30,7 @@ def build_equations(inverted_map):
 
         eq = Eq(sym, rhs)
         eqs.append(eq)
-    
+
     return z, s_syms, eqs
 
 
@@ -44,6 +43,9 @@ if __name__ == '__main__':
 
     map_next = build_kmp_automata(LETTERS, pat)
     inverted_map = get_inverted_map(LETTERS, map_next)
+
+    # def pprint(*args):
+    #     print(latex(*args))
 
     # pprint(inverted_map)
 
