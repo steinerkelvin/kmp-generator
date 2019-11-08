@@ -11,6 +11,7 @@ def build_equations(inverted_map):
     eqs = []
     for s in range(M):
         sym = s_syms[s]
+
         rhs_list = []
         invmap = inverted_map[s]
         for (src_st, chars) in invmap.items():

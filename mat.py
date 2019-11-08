@@ -1,10 +1,31 @@
 
 import string
-import symengine
+# import symengine
+from sympy import Symbol, sympify, zeros, pprint
 from kmp import build_kmp_automata, run_kmp, get_inverted_map
 
+# TODO numpy
+
 def build_mat(inverted_map):
-    return (None, None, None)
+    M = len(inverted_map)
+    z = Symbol('z')
+    s_syms = [Symbol(f's{i}') for i in range(M)]
+
+    mat = zeros(M, M)
+
+    for st in range(M):
+        sym = s_syms[st]
+        # mat[st][st] = sympify(-1)
+        mat[st, st] = -1
+
+        invmap = inverted_map[st]
+        for (src_st, chars) in invmap.items():
+            n = len(chars)
+            if src_st == M - 1:
+                continue
+            mat[st, src_st] += n * z
+
+    return (z, s_syms, mat)
 
 
 if __name__ == '__main__':
@@ -18,3 +39,16 @@ if __name__ == '__main__':
     inverted_map = get_inverted_map(LETTERS, map_next)
 
     z, s_syms, mat = build_mat(inverted_map)
+
+    M = len(s_syms)
+    b = zeros(M)
+    b[0] = -1
+
+    # for i in range(M):
+    #     print("[", end='')
+    #     for j in range(M):
+    #         print("{!s:8}".format(mat[i,j]), end=', ')
+    #     print("],")
+    
+    res = mat.LUsolve(b)
+    pprint(res)
