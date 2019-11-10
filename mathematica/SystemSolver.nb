@@ -1,0 +1,206 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      8069,        198]
+NotebookOptionsPosition[      7676,        182]
+NotebookOutlinePosition[      8088,        199]
+CellTagsIndexPosition[      8045,        196]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Seta", " ", "o", " ", "Diret\[OAcute]rio", " ", "do", " ", "Notebook", 
+    " ", 
+    RowBox[{"(", 
+     RowBox[{"deste", " ", "arquivo"}], ")"}], " ", "como", " ", 
+    "Principal"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"SetDirectory", "[", 
+     RowBox[{"NotebookDirectory", "[", "]"}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Abre", " ", "o", " ", "arquivo", " ", "\"\<entrada\>\"", " ", "em", " ", 
+     "modo", " ", "Leitura"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"OpenRead", "[", "\"\<entrada.txt\>\"", "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "L\[EHat]", " ", "a", " ", "quantidade", " ", "de", " ", "Letras"}], " ", 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"qtdeLetras", "=", 
+     RowBox[{"Read", "[", 
+      RowBox[{"\"\<entrada.txt\>\"", ",", "Number"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "L\[EHat]", " ", "a", " ", "quantidade", " ", "de", " ", "Estados"}], " ",
+     "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"qtdeEstados", "=", 
+     RowBox[{"Read", "[", 
+      RowBox[{"\"\<entrada.txt\>\"", ",", "Number"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "L\[EHat]", " ", "se", " ", "h\[AAcute]", " ", "ou", " ", "n\[ATilde]o", 
+     " ", "probabilidade"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"prob", "=", 
+     RowBox[{"Read", "[", 
+      RowBox[{"\"\<entrada.txt\>\"", ",", " ", "Number"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "L\[EHat]", " ", "o", " ", "Sistema", " ", "e", " ", "calcula", " ", "o", 
+     " ", "mesmo"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"system", " ", "=", " ", 
+     RowBox[{"<<", "\"\<entrada.txt\>\""}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{"Fecha", " ", "o", " ", "arquivo", " ", "\"\<entrada\>\""}], " ", 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Close", "[", "\"\<entrada.txt\>\"", "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Abre", " ", "o", " ", "arquivo", " ", "\"\<saida\>\"", " ", "em", " ", 
+     "modo", " ", "Escrita"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"OpenWrite", "[", "\"\<saida.txt\>\"", "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Escreve", " ", "o", " ", "Sistema", " ", "no", " ", "arquvio", " ", 
+     "\"\<saida\>\""}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Write", "[", 
+     RowBox[{"\"\<saida.txt\>\"", ",", " ", "system"}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{
+     "Verifica", " ", "se", " ", "calcular\[AAcute]", " ", "com", " ", 
+      "probabilidade", " ", "ou", " ", "n\[ATilde]o"}], ",", " ", 
+     RowBox[{"j\[AAcute]", " ", "realizando", " ", "o", " ", "mesmo"}]}], " ",
+     "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{"prob", "\[Equal]", "0"}], ",", 
+      RowBox[{"derivateFunction", " ", "=", " ", 
+       RowBox[{
+        RowBox[{"system", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ",", "qtdeEstados"}], "]"}], "]"}], " ", "/.", " ", 
+        RowBox[{"z", "\[Rule]", 
+         RowBox[{"(", 
+          RowBox[{"z", "/", "qtdeLetras"}], ")"}]}]}]}], ",", " ", 
+      RowBox[{"derivateFunction", " ", "=", " ", 
+       RowBox[{"system", "[", 
+        RowBox[{"[", 
+         RowBox[{"1", ",", "qtdeEstados"}], "]"}], "]"}]}]}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Calcula", " ", "a", " ", "m\[EAcute]dia", " ", "da", " ", 
+     "sequ\[EHat]ncia"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"media", "=", 
+     RowBox[{
+      RowBox[{"D", "[", 
+       RowBox[{"derivateFunction", ",", "z"}], "]"}], " ", "/.", " ", 
+      RowBox[{"z", "\[Rule]", "1"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Escreve", " ", "a", " ", "M\[EAcute]dia", " ", "da", " ", 
+     "Sequ\[EHat]ncia", " ", "no", " ", "arquvio", " ", "\"\<saida\>\""}], 
+    " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Write", "[", 
+     RowBox[{"\"\<saida.txt\>\"", ",", " ", "media"}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{"Fecha", " ", "o", " ", "arquivo", " ", "\"\<saida\>\""}], " ", 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Close", "[", "\"\<saida.txt\>\"", "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{"Fecha", " ", "o", " ", "Notebook", " ", 
+     RowBox[{"(", 
+      RowBox[{"este", " ", "arquivo"}], ")"}]}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"NotebookClose", "[", "]"}]}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.782371420460079*^9, 3.782371460680193*^9}, {
+   3.7823714949762926`*^9, 3.7823715460301332`*^9}, {3.7823716527476697`*^9, 
+   3.7823716818213787`*^9}, {3.7823717623041134`*^9, 3.782371838850113*^9}, {
+   3.7823719957816277`*^9, 3.782371999882721*^9}, {3.782372550947447*^9, 
+   3.7823725659865713`*^9}, {3.782372976523414*^9, 3.7823730095382957`*^9}, {
+   3.782373983414779*^9, 3.782374076795692*^9}, {3.782374170713824*^9, 
+   3.782374173130639*^9}, {3.782374512826273*^9, 3.782374513700574*^9}, {
+   3.782374611596267*^9, 3.7823746832734985`*^9}, {3.7823747666535177`*^9, 
+   3.7823747682153077`*^9}, {3.7823764940417385`*^9, 3.7823765239639363`*^9}, 
+   3.7823765964412355`*^9, {3.7823767047462873`*^9, 3.7823767050456686`*^9}, {
+   3.7823768379376545`*^9, 3.7823768390155983`*^9}, {3.7823769091003137`*^9, 
+   3.78237691170665*^9}, {3.782377071468108*^9, 3.7823770736597595`*^9}, {
+   3.7823771282690783`*^9, 3.782377129422078*^9}, {3.782377346360803*^9, 
+   3.7823773470497584`*^9}, {3.7823775756886406`*^9, 3.78237757781037*^9}, {
+   3.7823776422821836`*^9, 3.7823777630176897`*^9}, {3.7823778666074924`*^9, 
+   3.7823780127859693`*^9}, {3.7823780886077957`*^9, 3.7823781141220975`*^9}, 
+   3.7823781621847734`*^9, 3.7823784244013586`*^9, 3.7823787022799554`*^9, {
+   3.782379938699991*^9, 3.7823800820447073`*^9}, {3.782380169767092*^9, 
+   3.782380170537032*^9}, {3.7823804994581594`*^9, 3.7823805132553453`*^9}, {
+   3.782380565425724*^9, 3.782380605907591*^9}, {3.7823806425248675`*^9, 
+   3.782380655654642*^9}, {3.782380704788486*^9, 3.782380761461074*^9}, {
+   3.782380817140217*^9, 3.782380840123567*^9}, {3.7823808831248713`*^9, 
+   3.782380893269786*^9}, {3.782380927721492*^9, 3.7823809534111967`*^9}, {
+   3.782381108286712*^9, 3.782381120204197*^9}, {3.7823811634976897`*^9, 
+   3.782381163848235*^9}, {3.782381255057494*^9, 3.7823813061031914`*^9}, {
+   3.782381338646782*^9, 3.782381545323058*^9}, {3.782381716523702*^9, 
+   3.7823817197416897`*^9}, {3.782381816715526*^9, 
+   3.782381821727784*^9}},ExpressionUUID->"a955a7f7-6940-4de8-9b7e-\
+6af41a506bc8"]
+},
+InitializationCellEvaluation->True,
+InitializationCellWarning->False,
+WindowSize->{759, 697},
+WindowMargins->{{Automatic, 212}, {5, Automatic}},
+FrontEndVersion->"12.0 for Microsoft Windows (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 7114, 160, 809, "Input",ExpressionUUID->"a955a7f7-6940-4de8-9b7e-6af41a506bc8",
+ InitializationCell->True]
+}
+]
+*)
+
