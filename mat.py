@@ -1,7 +1,11 @@
 
 import string
-# import symengine
-from sympy import Symbol, sympify, zeros, pprint
+
+from symengine import Symbol, zeros, sympify
+# from sympy import Symbol, sympify, zeros, SparseMatrix
+
+# from sympy import pprint
+
 from kmp import build_kmp_automata, run_kmp, get_inverted_map
 
 # TODO numpy
@@ -12,11 +16,12 @@ def build_mat(inverted_map):
     s_syms = [Symbol(f's{i}') for i in range(M)]
 
     mat = zeros(M, M)
+    # mat = SparseMatrix.zeros(M, M)
 
     for st in range(M):
         sym = s_syms[st]
-        # mat[st][st] = sympify(-1)
-        mat[st, st] = -1
+        mat[st, st] = sympify(-1)
+        # mat[st, st] = -1
 
         invmap = inverted_map[st]
         for (src_st, chars) in invmap.items():
@@ -41,7 +46,7 @@ if __name__ == '__main__':
     z, s_syms, mat = build_mat(inverted_map)
 
     M = len(s_syms)
-    b = zeros(M)
+    b = zeros(M, 1)
     b[0] = -1
 
     # for i in range(M):
@@ -49,6 +54,11 @@ if __name__ == '__main__':
     #     for j in range(M):
     #         print("{!s:8}".format(mat[i,j]), end=', ')
     #     print("],")
-    
-    res = mat.LUsolve(b)
-    pprint(res)
+
+    print(mat)
+    print(b)
+
+    # res = mat.LUsolve(b)
+    res = mat.solve(b)
+    # pprint(res)
+    print(res)
