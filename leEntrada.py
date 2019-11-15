@@ -45,7 +45,6 @@ f = open("teste.txt", "r")
 # entradaEx = f.readline()
 # entradaEx = f.readline()
 entradaEx = f.readline()
-entradaEx = entradaEx.replace('\n', '') # Tira o \n da string
 while entradaEx:
     entradaEx = entradaEx.replace('\n', '') # Tira o \n da string
     print(entradaEx)
