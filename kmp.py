@@ -6,6 +6,7 @@ T = TypeVar('T')
 Letter = str
 Alphabet = Dict[str, Optional[Number]]
 NextStateMap = List[Dict[Letter, int]]
+SourceStatesMap = List[Dict[Letter, List[int]]]
 
 def run_kmp(
         map_next: NextStateMap,
@@ -23,7 +24,7 @@ def run_kmp(
 def build_kmp_automata(
         alphabet: Alphabet,
         pat: List[Letter],
-    ):
+    ) -> NextStateMap:
 
     # Tamanho do padrão
     N = len(pat)
@@ -47,13 +48,49 @@ def build_kmp_automata(
 
     return map_next
 
+def build_inverted_map(
+        alphabet: Alphabet,
+        map_next: NextStateMap,
+    ):
+    # Quantidade de estados
+    M = len(map_next)
+    inverted_map: SourceStatesMap = [ dict() for _ in range(M) ]
+
+    # Ignora o último estado, já que não devem existir transições a partir dele
+    for st in range(M-1):  
+        st_mp = map_next[st]
+        for c in alphabet:
+            nxt_st: int = st_mp.get(c, 0)
+            src_st_list = inverted_map[nxt_st].setdefault(c, [])
+            src_st_list.append(st)
+
+    return inverted_map
+
 
 if __name__ == '__main__':
-    from sympy import sympify
+    import string
+    from itertools import repeat
+    from pprint import pprint
+    from sympy import sympify, pprint as sympt
 
     half = sympify('1/2')
-    alphabet = {'a': half, 'b': half}
-    pattern = list("aabaaa")
 
-    kmp = build_kmp_automata(alphabet, pattern)
-    print(kmp)
+    # alphabet = {'a': half, 'b': half}
+    # pattern = list("aabaaa")
+
+    prob = sympify(1) / 26
+    alphabet = dict(zip(list(string.ascii_lowercase), repeat(prob)))
+    pattern = list("tobeornottobe")
+
+    print(f"{alphabet=}", "\n")
+
+    map_next = build_kmp_automata(alphabet, pattern)
+    print(f"{map_next=}", "\n")
+
+    inv = build_inverted_map(alphabet, map_next)
+
+    print("inverted map:")
+    for (s, mp) in enumerate(inv):
+        print(f"{s}: ")
+        pprint(mp)
+        print()
