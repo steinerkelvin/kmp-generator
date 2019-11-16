@@ -1,7 +1,7 @@
 
 import string
 from sympy import Symbol, Eq, collect, pprint, diff, solve, simplify, latex
-from kmp import build_kmp_automata, run_kmp, get_inverted_map
+from macacos_kmp import build_kmp_automata, get_inverted_map
 
 def build_equations(inverted_map):
     M = len(inverted_map)

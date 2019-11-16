@@ -66,14 +66,15 @@ class InputTransformer(Transformer):
         letter_map = dict(pairs)
         return letter_map
 
-    def pair(self, letter_tk, prob_tk):
-        return (str(letter_tk), prob_tk)
+    def pair(self, letter_tk, prob):
+        return (str(letter_tk), prob)
 
     def letter(self, letter_tk):
         return str(letter_tk)
 
     def prob(self, prob_tk):
-        return sympy.sympify(prob_tk)
+        prob = sympy.sympify(prob_tk)
+        return prob
     
     def pattern_word(self, word):
         return list(word)
