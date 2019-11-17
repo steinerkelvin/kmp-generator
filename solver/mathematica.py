@@ -1,11 +1,11 @@
 
 from typing import Tuple, List, Dict
+
 import sympy
+from sympy import Symbol, Expr
 
-from wolframclient.language import wl, wlexpr
+from wolframclient.language import wlexpr
 from wolframclient.evaluation import WolframLanguageSession
-from wolframclient.serializers import export
-
 from wolframclient.language.expression import WLFunction, WLSymbol
 
 
@@ -22,20 +22,13 @@ class BaseTransformer:
 
     def _handle_node(self, tree):
         if isinstance(tree, WLFunction):
-            # print(f"{tree.head.name=}")  ## DEBUG
             return self._handle_function(tree)
         elif isinstance(tree, WLSymbol):
-            # print(f"{tree.name=}")  ## DEBUG
-            newsb = self._handle_symbol(tree)
-            # print(f"{newsb=}")  ## DEBUG
-            return newsb
+            return self._handle_symbol(tree)
         else:
             return tree
 
     def _handle_function(self, func: WLFunction):
-        # print()  ## DEBUG
-        # print(func)  ## DEBUG
-
         head = func.head
         head_name = head.name
         args = func.args
@@ -48,26 +41,28 @@ class BaseTransformer:
         else:
             new_tree = WLFunction(head, new_children)
 
-        return new_tree        # print()  ## DEBUG
-        # print(func)  ## DEBUG
+        return new_tree
+
+    def _handle_symbol(self, wsym: WLSymbol):
+        name: str = wsym.name
         return name
 
 
 class WlSympyTransformer(BaseTransformer):
-    _wsym_map: Dict[WLSymbol, sympy.Symbol]
-    _sym_per_name: Dict[str, sympy.Symbol]
+    _wsym_map: Dict[WLSymbol, Symbol]
+    _sym_per_name: Dict[str, Symbol]
 
     def __init__(self):
         self._wsym_map = {}
         self._sym_per_name = {}
 
-    def get_symbols(self) -> Dict[str, sympy.Symbol]:
+    def get_symbols(self) -> Dict[str, Symbol]:
         return dict(self._sym_per_name)
 
     def _make_symbol(self, wsym: WLSymbol):
         name: str = wsym.name
         name = remove_prefix(name, 'Global`')
-        sym = sympy.Symbol(name)
+        sym = Symbol(name)
         self._wsym_map[wsym] = sym
         self._sym_per_name[name] = sym
         return sym
@@ -90,27 +85,21 @@ class WlSympyTransformer(BaseTransformer):
 
 def extract_wolfram_solution(
         wsolution: Tuple[WLFunction],
-    ) -> Tuple[Dict[str, sympy.Symbol], Dict[str, sympy.Expr]]:
+    ) -> Tuple[Dict[str, Symbol], Dict[str, Expr]]:
 
     transformer = WlSympyTransformer()
 
     results = {}
-    for ri, rule in enumerate(wsolution):
-        # print(f"RULE {ri}:")  ## DEBUG
-
+    for rule in wsolution:
         wsymb, wexp = rule
-        var_name = remove_prefix(wsymb.name, 'Global`')
-
         exp = transformer.transform(wexp)
 
+        var_name = remove_prefix(wsymb.name, 'Global`')
         results[var_name] = exp
-        # print(f"{var_name} -> {exp}")  ## DEBUG
-        # print()  ## DEBUG
 
-    symbs = transformer.get_symbols()
-    # print(symbs)  ## DEBUG
+    symb_map = transformer.get_symbols()
 
-    return symbs, results
+    return symb_map, results
 
 
 WOLFRAM_SOLVE_TEMPLATE = "Solve[ {{ {eqs} }}, {{ {syms} }} ]"
@@ -120,8 +109,8 @@ def txt_eq(eq_item):
     return " == ".join(map(str, (lhs, rhs)))
 
 def build_wsystem_txt(
-        syms: List[sympy.Symbol],
-        eq_map: Dict[sympy.Symbol, sympy.Expr],
+        syms: List[Symbol],
+        eq_map: Dict[Symbol, Expr],
     ):
 
     txt_syms = ", ".join(map(str, syms))
@@ -130,21 +119,32 @@ def build_wsystem_txt(
     wex = WOLFRAM_SOLVE_TEMPLATE.format( eqs=txt_eqs, syms=txt_syms )
     return wex
 
+# TODO usar lista de equações em vez de `eq_map`
 def solve_system(
-        syms: List[sympy.Symbol],
-        eq_map: Dict[sympy.Symbol, sympy.Expr],
-    ):
-    wex_txt = build_wsystem_txt(syms, eq_map)
+        z: Symbol,
+        st_syms: List[Symbol],
+        eq_map: Dict[Symbol, Expr],
+    ) -> Tuple[Symbol, Dict[Symbol, Expr]]:
+
+    sym_for_name = { v.name: v for v in st_syms }
+
+    wex_txt = build_wsystem_txt(st_syms, eq_map)
+    wexp = wlexpr(wex_txt)
 
     with WolframLanguageSession() as wsession:
-        wexp = wlexpr(wex_txt)
-
         wsolutions = wsession.evaluate(wexp)
         wsolution, *_ = wsolutions
+        res_sym_map, _results = extract_wolfram_solution(wsolution)
 
-        ressyms, results = extract_wolfram_solution(wsolution)
+    res_z = res_sym_map[z.name]
 
-    return ressyms, results
+    results = {
+        sym_for_name[sym_name]: result
+        for sym_name, result
+        in _results.items()
+    }
+
+    return res_z, results
 
 
 if __name__ == '__main__':
@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
     # Criando entrada para o Wolfram a partir de expressões do SymPy
 
-    z = sympy.Symbol('z')
+    z = Symbol('z')
     s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13 = st_syms = (
         sympy.symbols('s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13')
     )
@@ -200,8 +200,7 @@ if __name__ == '__main__':
 
     built_winput = build_wsystem_txt(st_syms, eq_map)
 
-    ressyms, results = solve_system(st_syms, eq_map)
-    print(ressyms)
+    z, results = solve_system(z, st_syms, eq_map)
 
     for s, ex in results.items():
         print('\n')

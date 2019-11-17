@@ -8,8 +8,6 @@ from symengine import Symbol, zeros, sympify
 
 from kmp import build_kmp_automata, run_kmp, get_inverted_map
 
-# TODO numpy
-
 def build_mat(inverted_map):
     M = len(inverted_map)
     z = Symbol('z')
