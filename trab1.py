@@ -1,23 +1,31 @@
 #!/usr/bin/env python
 # coding: UTF-8
 
+from sys import stderr
+import argparse
 import sympy
 
 import parser
 import solver
 from kmp import build_kmp_automata, build_inverted_map, build_equations
 
+def pterr(*args, **kargs):
+    print(*args, **kargs, file=stderr)
+
+argparser = argparse.ArgumentParser(description=(
+    "Gera automato KMP e calcula o tempo médio para uma entrada aleatória ser aceita."))
+argparser.add_argument('input_file')
+
+# TODO Permitir entrada do stdin ?
 
 if __name__ == '__main__':
-    # INPUT_FILE = 'exemplos/aabaaa.txt'
-    # INPUT_FILE = 'exemplos/cccc.txt'
-    # INPUT_FILE = 'exemplos/macaco.txt'  # TODO
-    INPUT_FILE = 'exemplos/macaco_probs.txt'
+    args = argparser.parse_args()
+    input_file = args.input_file
 
     # SOLVER = solver.native
     SOLVER = solver.mathematica
 
-    with open(INPUT_FILE) as f:
+    with open(input_file) as f:
         input_txt = f.read()
 
     input_ast = parser.input_parser.parse(input_txt)
@@ -39,29 +47,41 @@ if __name__ == '__main__':
         last_sym = st_syms[-1]
         last_sfunc = sols[last_sym]
 
-        # # Imprime todas funções geradoras
-        # for (sym, sol) in sols.items():
-        #     print(f"\n\n{sym}:")
-        #     sympy.pprint(sol)
-
-        # Imprime função geradora do estado final
-        print("\n\n\n", f"{last_sym}:")
-        sympy.pprint(last_sfunc)
-
         # TODO testar se deve adicionar os pesos
         # n = len(alphabet)
         # g = last_sfunc.subs(z, z/n)
 
         g = last_sfunc
-        # print("\n\n\n", "g(z):"); sympy.pprint(g)
 
         # Deriva função geradora de probabilidades
         gd = sympy.diff(g, z)
-        # print("\n\n\n", "g'(z):"); sympy.pprint(gd)
 
         # result = gd.evalf(subs={z: 1})
         result = gd.subs({z: 1})
 
-        print('\n')
-        print('result: {}'.format(result))
-        print('result: {}'.format(result.evalf()))
+
+        # Saída
+
+        print("\n")
+        print("g(z):")
+        sympy.pprint(g, wrap_line=False)
+
+        print("\n\n")
+        print("g'(z):")
+        sympy.pprint(gd, wrap_line=False)
+
+        # Imprime todas funções geradoras
+        print("\n")
+        for (sym, sol) in sols.items():
+            print("\n")
+            print(f"{sym}:")
+            sympy.pprint(sol, wrap_line=False)
+
+        # # Imprime função geradora do estado final
+        # pterr("\n\n")
+        # pterr(f"{last_sym}:")
+        # sympy.pprint(last_sfunc, wrap_line=False)
+
+        print('\n\n')
+        print('Tempo médio = {}'.format(result))
+        print('            = {}'.format(result.evalf()))
