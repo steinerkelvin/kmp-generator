@@ -1,73 +1,27 @@
-
-from typing import Tuple, List, Dict
+#!/usr/bin/env python
+# coding: UTF-8
 
 import sympy
-from sympy import Symbol, Expr
 
-from kmp import Alphabet, SourceStatesMap, build_kmp_automata, build_inverted_map
-from parser.input import parser as input_parser, InputTransformer
-
-from solver.native      import solve_system as solve_system_native
-from solver.mathematica import solve_system as solve_system_mathematica
-
-
-def build_equations(
-        alphabet: Alphabet,
-        inverted_map: SourceStatesMap,
-        weighted = True,
-    ) -> Tuple[Symbol, List[Symbol], Dict[str, Expr]]:
-    
-    # Número de estados
-    M = len(inverted_map)
-
-    z = Symbol('z')
-
-    # Símbolos que representam as funções geradoras associadas a cada estado
-    st_syms: List[Symbol] = [Symbol(f's{i}') for i in range(M)]
-
-    eq_map = {}
-    for st in range(M):
-        stsym = st_syms[st]
-        st_invmap = inverted_map[st]
-
-        rhs_list = []
-        for (c, src_sts) in st_invmap.items():
-            n = len(src_sts)
-
-            prob = alphabet[c]
-
-            src_syms = map(lambda st: st_syms[st], src_sts)
-            rhs_item = z * prob * sum(src_syms)
-            rhs_list.append(rhs_item)
-
-        rhs = sum(rhs_list)
-        rhs = sympy.collect(rhs, z)
-
-        if st == 0:
-            rhs += 1
-
-        # eq = Eq(stsym, rhs)
-        # eqs.append(eq)
-
-        eq_map[stsym] = rhs
-
-    return z, st_syms, eq_map
-
+import parser
+import solver
+from kmp import build_kmp_automata, build_inverted_map, build_equations
 
 
 if __name__ == '__main__':
     # INPUT_FILE = 'exemplos/aabaaa.txt'
+    # INPUT_FILE = 'exemplos/cccc.txt'
     # INPUT_FILE = 'exemplos/macaco.txt'  # TODO
     INPUT_FILE = 'exemplos/macaco_probs.txt'
 
-    # SOLVER = solve_system_native
-    SOLVER = solve_system_mathematica
+    # SOLVER = solver.native
+    SOLVER = solver.mathematica
 
     with open(INPUT_FILE) as f:
         input_txt = f.read()
 
-    input_ast = input_parser.parse(input_txt)
-    problems = InputTransformer().transform(input_ast)
+    input_ast = parser.input_parser.parse(input_txt)
+    problems = parser.InputTransformer().transform(input_ast)
 
     for problem in problems:
         alphabet, pattern = problem

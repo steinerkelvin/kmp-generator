@@ -1,6 +1,7 @@
 
-from typing import TypeVar, Optional, List, Dict
-from sympy import Number
+from typing import TypeVar, Optional, Tuple, List, Dict
+import sympy
+from sympy import Number, Symbol, Expr
 
 T = TypeVar('T')
 Letter = str
@@ -65,6 +66,48 @@ def build_inverted_map(
             src_st_list.append(st)
 
     return inverted_map
+
+def build_equations(
+        alphabet: Alphabet,
+        inverted_map: SourceStatesMap,
+        weighted = True,
+    ) -> Tuple[Symbol, List[Symbol], Dict[str, Expr]]:
+
+    # Número de estados
+    M = len(inverted_map)
+
+    z = Symbol('z')
+
+    # Símbolos que representam as funções geradoras associadas a cada estado
+    st_syms: List[Symbol] = [Symbol(f's{i}') for i in range(M)]
+
+    eq_map = {}
+    for st in range(M):
+        stsym = st_syms[st]
+        st_invmap = inverted_map[st]
+
+        rhs_list = []
+        for (c, src_sts) in st_invmap.items():
+            n = len(src_sts)
+
+            prob = alphabet[c]
+
+            src_syms = map(lambda st: st_syms[st], src_sts)
+            rhs_item = z * prob * sum(src_syms)
+            rhs_list.append(rhs_item)
+
+        rhs = sum(rhs_list)
+        rhs = sympy.collect(rhs, z)
+
+        if st == 0:
+            rhs += 1
+
+        # eq = Eq(stsym, rhs)
+        # eqs.append(eq)
+
+        eq_map[stsym] = rhs
+
+    return z, st_syms, eq_map
 
 
 if __name__ == '__main__':

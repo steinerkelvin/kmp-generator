@@ -1,7 +1,4 @@
-#!/bin/python
 
-from typing import Any
-from dataclasses import dataclass
 from collections import namedtuple
 from itertools import repeat
 
@@ -89,7 +86,7 @@ if __name__ == '__main__':
     # Exemplo de entrada
     # {('C', 0.25), ('G', 0.25), ('A', 0.3), ('T', 0.2)}, {'CCUGATATA'}
 
-    with open("exemplo_entrada.txt", "r") as f:
+    with open("../old/exemplo_entrada.txt", "r") as f:
         txt = f.read()
         ast = parser.parse(txt)
         print(ast.pretty())
