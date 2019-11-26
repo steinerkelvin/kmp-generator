@@ -11,7 +11,7 @@ pip install -r requirements.txt
 
 ### Running
 
-Make sure you are inside de venv:
+Make sure you are inside the venv:
 
 ```sh
 source venv/bin/activate

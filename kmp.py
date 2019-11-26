@@ -125,10 +125,10 @@ if __name__ == '__main__':
     alphabet = dict(zip(list(string.ascii_lowercase), repeat(prob)))
     pattern = list("tobeornottobe")
 
-    print(f"{alphabet=}", "\n")
+    print(f"alphabet={alphabet}", "\n")
 
     map_next = build_kmp_automata(alphabet, pattern)
-    print(f"{map_next=}", "\n")
+    print(f"map_next={map_next}", "\n")
 
     inv = build_inverted_map(alphabet, map_next)
 
