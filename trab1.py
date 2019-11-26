@@ -12,11 +12,29 @@ from kmp import build_kmp_automata, build_inverted_map, build_equations
 def pterr(*args, **kargs):
     print(*args, **kargs, file=stderr)
 
+def fill_probs(alphabet):
+    prob_sum = sum(
+        filter(lambda x: x != None, alphabet.values()),
+    )
+    none_count = len(list(
+        filter(lambda x: x == None, alphabet.values())
+    ))
+
+    fill_prob = (sympy.sympify(1) - prob_sum) / none_count
+
+    new_alphabet = {}
+    for c, p in alphabet.items():
+        if p == None:
+            new_alphabet[c] = fill_prob
+        else:
+            new_alphabet[c] = p
+
+    return new_alphabet
+
+
 argparser = argparse.ArgumentParser(description=(
     "Gera automato KMP e calcula o tempo médio para uma entrada aleatória ser aceita."))
 argparser.add_argument('input_file')
-
-# TODO Permitir entrada do stdin ?
 
 if __name__ == '__main__':
     args = argparser.parse_args()
@@ -34,6 +52,8 @@ if __name__ == '__main__':
     for problem in problems:
         alphabet, pattern = problem
 
+        alphabet = fill_probs(alphabet)
+
         kmp_map = build_kmp_automata(alphabet, pattern)
         inv_map = build_inverted_map(alphabet, kmp_map)
 
@@ -47,7 +67,6 @@ if __name__ == '__main__':
         last_sym = st_syms[-1]
         last_sfunc = sols[last_sym]
 
-        # TODO testar se deve adicionar os pesos
         # n = len(alphabet)
         # g = last_sfunc.subs(z, z/n)
 

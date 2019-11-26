@@ -5,7 +5,6 @@ import sympy
 from sympy import Symbol, Expr
 
 
-# TODO usar lista de equações em vez de `eq_map`
 def solve_system(
         z: Symbol,
         st_syms: List[Symbol],

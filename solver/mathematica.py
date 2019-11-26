@@ -119,7 +119,6 @@ def build_wsystem_txt(
     wex = WOLFRAM_SOLVE_TEMPLATE.format( eqs=txt_eqs, syms=txt_syms )
     return wex
 
-# TODO usar lista de equações em vez de `eq_map`
 def solve_system(
         z: Symbol,
         st_syms: List[Symbol],
