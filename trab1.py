@@ -41,7 +41,7 @@ if __name__ == '__main__':
     input_file = args.input_file
 
     # SOLVER = solver.native
-    SOLVER = solver.mathematica
+    # SOLVER = solver.mathematica
 
     with open(input_file) as f:
         input_txt = f.read()
@@ -61,7 +61,10 @@ if __name__ == '__main__':
         z, st_syms, eq_map = build_equations(alphabet, inv_map)
 
         # Resolver o sistema com o solucionador selecionado
-        z, sols = SOLVER(z, st_syms, eq_map)
+        try:
+            z, sols = solver.mathematica(z, st_syms, eq_map)
+        except:
+            z, sols = solver.native(z, st_syms, eq_map)
 
         # Pega função geradora do último estado
         last_sym = st_syms[-1]
